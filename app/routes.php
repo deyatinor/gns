@@ -11,10 +11,8 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('hello');
-});
+Route::get('/', 'HomeController@showInputMatrix');
+Route::post('/', 'HomeController@calculateMatrix');
 Route::get('get', 'HomeController@showGet');
 Route::get('json', 'HomeController@showJson');
 Route::get('all', 'HomeController@showAll');

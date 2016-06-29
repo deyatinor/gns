@@ -30,8 +30,13 @@ class HomeController extends BaseController {
 	    $i = 0;
 	    foreach ($data as $row){
 	        echo $i." ";
-	        if (!Game::where("Season",$row["Season"])->where("Status", $row["Status"])->where("HomeTeam", $row["HomeTeam"])->where("AwayTeam", $row["AwayTeam"])->count())
-    	        Game::firstOrCreate($row);
+	        try{
+	            if (!Game::where("Season",$row["Season"])->where("Status", $row["Status"])->where("HomeTeam", $row["HomeTeam"])->where("AwayTeam", $row["AwayTeam"])->count())
+        	        Game::firstOrCreate($row);
+	        }catch(Exception $e){
+	            echo $e->getMessage();
+	        }
+	        
 	        $i++;
 	        if ($i==10){
 	            break;
@@ -91,6 +96,27 @@ class HomeController extends BaseController {
         }
         
         return $xml;
+    }
+    
+    public function showInputMatrix()
+    {
+        return View::make("input-matrix",array("message"=>""));
+    }
+    
+    public function calculateMatrix()
+    {
+        $xm = Input::get("xmatrix");
+        $ym = Input::get("ymatrix");
+        $xp = Input::get("xpoint");
+        $yp = Input::get("ypoint");
+        if (is_int($xm) && is_int($ym) && is_int($xp) && is_int($yp)){
+            $max = max($xp,$yp, abs($xm-$xp), abs($ym-$yp));
+            $ending = ($max%10==1)?"":(($max%10<5)?"а":"ов");
+            $message = "Программа завоюет мир за ".$max." ход".$ending.".<br />";
+        } else {
+            $message = "Все значения должны быть числами<br />";
+        }
+        return View::make("input-matrix",array("message"=>$message));
     }
 
 }
